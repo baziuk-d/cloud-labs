@@ -1,11 +1,14 @@
 from flask import request, jsonify
 from functools import wraps
+import os
 import firebase_admin
 from firebase_admin import auth as firebase_auth, credentials
 
 if not firebase_admin._apps:
     cred = credentials.ApplicationDefault()
-    firebase_admin.initialize_app(cred)
+    firebase_admin.initialize_app(cred, {
+        'projectId': os.getenv('PROJECT_ID')
+    })
 
 
 def require_auth(f):
