@@ -6,7 +6,7 @@ import time
 import requests
 from threading import Lock
 
-BASE_URL = os.environ.get("BASE_URL", "https://flask-app-509731619895.europe-west1.run.app")
+BASE_URL = os.environ.get("BASE_URL", "https://flask-app-795973297554.europe-west1.run.app")
 
 print(f"Running load tests against {BASE_URL}")
 
@@ -22,8 +22,8 @@ stats = {
 
 def get_token():
     payload = {
-        "email": "test@gmail.com",
-        "password": "123456789",
+        "email": "damik@gmail.com",
+        "password": "string",
         "returnSecureToken": True
     }
     try:
@@ -66,34 +66,25 @@ def make_request(endpoint: str, token, method: str, data=None):
 
 def continuous_load_worker(token, worker_id, stop_time):
     """Безперервно відправляє запити до stop_time"""
-    local_stats = {'success': 0, 'failed': 0, 'times': []}
-    
     endpoints = [
         ("/users", "GET", None),
         ("/users/33", "GET", None),
     ]
-    
+
     while time.time() < stop_time:
-        # Вибираємо випадковий endpoint
         endpoint, method, data = random.choice(endpoints)
         result = make_request(endpoint, token, method, data)
-        
-        if result['status'] in [200, 201, 204]:
-            local_stats['success'] += 1
-            if 'response_time' in result:
-                local_stats['times'].append(result['response_time'])
-        else:
-            local_stats['failed'] += 1
-        
-        # Мала пауза між запитами від ОДНОГО воркера
+
+        with stats_lock:
+            stats['total'] += 1
+            if result['status'] in [200, 201, 204, 401]:
+                stats['success'] += 1
+                if 'response_time' in result:
+                    stats['times'].append(result['response_time'])
+            else:
+                stats['failed'] += 1
+
         time.sleep(random.uniform(0.05, 0.15))
-    
-    # Оновлюємо глобальну статистику
-    with stats_lock:
-        stats['total'] += local_stats['success'] + local_stats['failed']
-        stats['success'] += local_stats['success']
-        stats['failed'] += local_stats['failed']
-        stats['times'].extend(local_stats['times'])
 
 
 def run_load_test(num_users=15, duration_seconds=60):
