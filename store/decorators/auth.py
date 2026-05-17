@@ -1,14 +1,19 @@
 from flask import request, jsonify
 from functools import wraps
 import os
-import firebase_admin
-from firebase_admin import auth as firebase_auth, credentials
+import requests as http_requests
 
-if not firebase_admin._apps:
-    cred = credentials.ApplicationDefault()
-    firebase_admin.initialize_app(cred, {
-        'projectId': os.getenv('PROJECT_ID')
-    })
+
+def verify_token(token):
+    api_key = os.getenv('IDENTITY_KEY')
+    response = http_requests.post(
+        f"https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={api_key}",
+        json={"idToken": token},
+        timeout=5
+    )
+    if response.status_code != 200:
+        raise Exception(response.json().get('error', {}).get('message', 'Invalid token'))
+    return response.json()
 
 
 def require_auth(f):
@@ -20,7 +25,7 @@ def require_auth(f):
 
         token = auth_header.split(' ')[1]
         try:
-            firebase_auth.verify_id_token(token)
+            verify_token(token)
         except Exception as e:
             return jsonify({'error': 'Invalid token', 'details': str(e)}), 401
 
