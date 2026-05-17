@@ -1,16 +1,19 @@
 import os
+import sys
 import mysql.connector
 from mysql.connector import pooling
 
-# НЕ створюємо pool при імпорті
 _connection_pool = None
 
 
 def create_connection_pool():
     """Create database connection pool with Cloud Run support"""
     db_host = os.environ.get("DB_HOST", "localhost")
-    
-    # Check if using Cloud SQL unix socket
+
+    print(f"[DB] Connecting to: {db_host}", file=sys.stderr, flush=True)
+    print(f"[DB] User: {os.environ.get('DB_USER')}", file=sys.stderr, flush=True)
+    print(f"[DB] Database: {os.environ.get('DB_NAME')}", file=sys.stderr, flush=True)
+
     if db_host.startswith("/cloudsql/"):
         connection_config = {
             "unix_socket": db_host,
@@ -32,14 +35,13 @@ def create_connection_pool():
             "pool_size": 5,
             "pool_reset_session": True,
         }
-    
+
     try:
         pool = pooling.MySQLConnectionPool(**connection_config)
-        print(f"✓ Database connection pool created for {db_host}")
+        print(f"[DB] ✓ Connection pool created for {db_host}", file=sys.stderr, flush=True)
         return pool
     except Exception as e:
-        print(f"✗ Error creating connection pool: {e}")
-        # Не викидаємо помилку - дозволяємо додатку запуститися
+        print(f"[DB] ✗ Error creating connection pool: {type(e).__name__}: {e}", file=sys.stderr, flush=True)
         return None
 
 
