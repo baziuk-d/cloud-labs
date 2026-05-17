@@ -3,7 +3,8 @@ name: Deploy to Cloud Run
 on:
   push:
     branches:
-      - main
+      - lab1
+  workflow_dispatch:
 
 jobs:
   build-and-push:
