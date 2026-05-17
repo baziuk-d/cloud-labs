@@ -38,7 +38,7 @@ jobs:
             --region ${{ secrets.GCP_REGION }} \
             --allow-unauthenticated \
             --set-secrets=DB_USER=DB_USER:latest,DB_HOST=DB_HOST:latest,DB_NAME=DB_NAME:latest,DB_PASSWORD=DB_PASSWORD:latest,DB_PORT=DB_PORT:latest,IDENTITY_KEY=IDENTITY_KEY:latest \
-            --set-env-vars=PROJECT_ID=${{ secrets.GCP_PROJECT_ID }} \
+            --set-env-vars=PROJECT_ID=pro-creek-496609-d7-5a9cc \
             --add-cloudsql-instances=${{ secrets.GCP_PROJECT_ID }}:${{ secrets.GCP_REGION }}:storedb \
             --min-instances 0 \
             --max-instances 3 \
