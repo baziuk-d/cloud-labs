@@ -1,0 +1,14 @@
+services:
+  web:
+    image: ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/flask-repo/flask-app:latest
+    container_name: flask_app
+    restart: always
+    environment:
+      DB_USER: ${DB_USER}
+      DB_HOST: ${DB_HOST}
+      DB_NAME: ${DB_NAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_PORT: ${DB_PORT}
+      IDENTITY_KEY: ${IDENTITY_KEY}
+    ports:
+      - "5000:5000"

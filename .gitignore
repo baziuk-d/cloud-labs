@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# VSCode settings
+.vscode/
+
+# Mypy cache
+.mypy_cache/
+
+# Environment variables
+.env
+*.env
+
+# GCP / credentials
+github-actions-key.json
+*.json.key
+service-account*.json
+
+# SQL dumps
+*.sql
+
+# Logs
+*.log
+logs/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.idea/
+
+# Others
+*.sqlite3
+*.db
+
+config/
